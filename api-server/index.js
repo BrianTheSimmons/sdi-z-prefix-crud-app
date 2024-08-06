@@ -5,6 +5,9 @@ const cors = require("cors");
 const knex = require("knex")(
   require("./knexfile.js")[process.env.NODE_ENV || "development"]
 );
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+const { findUserByUsername } = require("./findUser.js");
 
 // Middleware
 app.use(express.json());
@@ -106,22 +109,27 @@ app.patch("/items/:id", function (req, res) {
 });
 
 // POST new user
-// WILL NEED FURTHER TESTING TO AVOID DUPLICATE USER ACCOUNTS
 app.post("/users", async (req, res) => {
   const { first_name, last_name, username, password } = req.body;
   console.log("Received request to make account:", req.body);
-  // const existingUser = await knex("user_info").where(username);
-  // if (existingUser) {
-  //   console.log(`Username: ${username} already exist`);
-  //   return;
-  // }
-  // const hashedPassword = await bcrypt.hash(password, 10);
+  // Grab any users with the input username
+  const existingUser = await knex("user_info").where({ username });
+  // If a user with that username already exists, exit
+  if (existingUser.length > 0) {
+    console.log(`${username} already exists and will not be created.`);
+    res.status(409).send(`${username} already exists.`);
+    return;
+  }
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  // Input the data to the user_info table
   await knex("user_info")
     .insert({
       first_name: first_name,
       last_name: last_name,
       username: username,
-      password: password,
+      password: hashedPassword,
     })
     .then((data) => {
       console.log(`Username: ${username} was made successfully`);
@@ -132,6 +140,30 @@ app.post("/users", async (req, res) => {
         message: "Post request failed. Please try again.",
       });
     });
+});
+
+// POST for user login
+// WILL NEED TO TEST USING FRONT END TO MAKE SURE IT WORKS
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  console.log("Received login request:", req.body); // Add this line
+  try {
+    const user = await findUserByUsername(username);
+    console.log("USER: ", user);
+    if (!user) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+    const match = await bcrypt.compare(password, user.password);
+    console.log("MATCH: ", match);
+    if (!match) {
+      return res.status(400).json({ message: "Invalid username or password" });
+    }
+    // Passwords match
+    res.status(200).json({ message: "Login successful" });
+  } catch (error) {
+    console.error("Error during authentication:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 // Listen
