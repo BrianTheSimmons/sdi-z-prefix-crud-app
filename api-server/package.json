@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "npx knex migrate:latest && npx knex seed:run && nodemon index.js",
+    "start-dev": "knex migrate:rollback && knex migrate:latest && knex seed:run && nodemon index.js"
   },
   "author": "",
   "license": "ISC",

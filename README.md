@@ -29,3 +29,5 @@ psql -U postgres
 You will need to create a database with the following name:
 
 CREATE DATABASE inventory_management;
+
+From here, you should be able to run 'npm start' while inside of the api_server directory to populate the database with the appropriate tables and seed data, as well as start the server! If not, make sure you ran all of the commands as outlined above and try again. If issues still persist, god speed.
