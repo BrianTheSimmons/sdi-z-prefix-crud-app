@@ -27,6 +27,21 @@ app.get("/items", (req, res) => {
     );
 });
 
+// GET all items by specified user
+app.get("/items/:user_id", (req, res) => {
+  const { user_id } = req.params;
+  knex("items")
+    .select("*")
+    .where({ user_id })
+    .then((data) => res.status(200).json(data))
+    .catch((err) =>
+      res.status(404).json({
+        message:
+          "The items you are looking for could not be found. Please try again.",
+      })
+    );
+});
+
 // GET individual item by ID
 app.get("/items/:id", (req, res) => {
   const { id } = req.params;
@@ -99,6 +114,26 @@ app.patch("/items/:id", function (req, res) {
         res.status(204).json(data);
       } else {
         res.status(404).json({ message: "Item not found" });
+      }
+    })
+    .catch((err) =>
+      res.status(500).json({
+        message: err,
+      })
+    );
+});
+
+// GET individual user by username
+app.get("/users/:username", (req, res) => {
+  const { username } = req.params;
+  knex("user_info")
+    .where({ username })
+    .first()
+    .then((data) => {
+      if (data) {
+        res.status(200).json(data);
+      } else {
+        res.status(404).json({ message: "User not found" });
       }
     })
     .catch((err) =>

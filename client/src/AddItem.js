@@ -9,30 +9,33 @@ import {
   Modal,
   Input,
   FormControl,
+  TextField,
 } from "@mui/material";
+import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-export default function CreateAccount() {
+export default function AddItem() {
+  const { id, username } = useParams();
   const navigate = useNavigate();
   const [openSuccess, setOpenSuccess] = useState(false);
   const [openFail, setOpenFail] = useState(false);
-  const [userDetails, setUserDetails] = useState({
-    first_name: "",
-    last_name: "",
-    username: "",
-    password: "",
+  const [itemDetails, setItemDetails] = useState({
+    user_id: id,
+    item_name: "",
+    quantity: "",
+    description: "",
   });
 
-  const createUser = async (newUser) => {
+  const createItem = async (newItem) => {
     try {
-      console.log("createUser has been triggered with:", newUser);
+      console.log("createItem has been triggered with:", newItem);
 
-      const response = await fetch("http://localhost:5000/users", {
+      const response = await fetch("http://localhost:5000/items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newUser),
+        body: JSON.stringify(newItem),
       });
 
       if (!response.ok) {
@@ -40,14 +43,14 @@ export default function CreateAccount() {
       }
       return 1;
     } catch (error) {
-      console.log("Error creating user:", error);
+      console.log("Error creating item:", error);
       return 0;
     }
   };
 
   const handleSubmit = async () => {
     try {
-      let res = await createUser(userDetails);
+      let res = await createItem(itemDetails);
       return res;
     } catch (error) {
       console.log("Error handling submit: ", error);
@@ -56,8 +59,8 @@ export default function CreateAccount() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserDetails({
-      ...userDetails,
+    setItemDetails({
+      ...itemDetails,
       [name]: value,
     });
   };
@@ -87,24 +90,24 @@ export default function CreateAccount() {
 
   const bodySuccess = (
     <Card sx={{ width: 400, mx: "auto", p: 3, mt: 5 }}>
-      <h2 id="simple-modal-title">Account Created successfully!</h2>
+      <h2 id="simple-modal-title">Item Created successfully!</h2>
       <Button
         sx={{ mt: 1 }}
         variant="outlined"
         onClick={() => {
-          navigate("/");
+          navigate(`/user/${username}`);
         }}
       >
-        Back to Login
+        Back to your items
       </Button>
     </Card>
   );
 
   const bodyFail = (
     <Card sx={{ width: 400, mx: "auto", p: 3, mt: 5 }}>
-      <h2 id="simple-modal-title">Username already in use</h2>
+      <h2 id="simple-modal-title">Failed to create new item</h2>
       <Button sx={{ mt: 1 }} variant="outlined" onClick={handleClose}>
-        Back to Create Account
+        Back to Create Item
       </Button>
     </Card>
   );
@@ -116,56 +119,51 @@ export default function CreateAccount() {
           <CardContent>
             <form onSubmit={handleFunctions}>
               <Stack>
-                <h1>Create New Account</h1>
-                <FormControl id="first_name" isRequired>
+                <h1>Create New Item</h1>
+                <FormControl id="item_name" isRequired>
+                  <Input type="hidden" name="user_id" value={id} />
+                </FormControl>
+                <FormControl id="item_name" isRequired>
                   <Input
-                    placeholder="first_name"
-                    name="first_name"
+                    placeholder="Item Name"
+                    name="item_name"
                     sx={{ mt: 1 }}
-                    value={userDetails.first_name}
+                    value={itemDetails.item_name}
                     onChange={handleChange}
                   />
                 </FormControl>
-                <FormControl id="last_name" isRequired>
+                <FormControl id="quantity" isRequired>
                   <Input
-                    id="last_name"
-                    placeholder="last_name"
-                    name="last_name"
+                    id="quantity"
+                    placeholder="Quantity"
+                    name="quantity"
                     sx={{ mt: 1 }}
-                    value={userDetails.last_name}
+                    value={itemDetails.quantity}
                     onChange={handleChange}
                   />
                 </FormControl>
-                <FormControl id="username" isRequired>
-                  <Input
-                    id="username"
-                    placeholder="Username"
-                    name="username"
-                    sx={{ mt: 1 }}
-                    value={userDetails.username}
+                <FormControl id="description" isRequired>
+                  <TextField
+                    id="description"
+                    placeholder="Description"
+                    name="description"
+                    sx={{ mt: 2, p: 0 }}
+                    minRows={3}
+                    value={itemDetails.description}
                     onChange={handleChange}
-                  />
-                </FormControl>
-                <FormControl id="password" isRequired>
-                  <Input
-                    id="password"
-                    placeholder="Password"
-                    name="password"
-                    type="password"
-                    sx={{ mt: 1 }}
-                    value={userDetails.password}
-                    onChange={handleChange}
-                  />
+                  ></TextField>
                 </FormControl>
                 <Button sx={{ mt: 1 }} variant="contained" type="submit">
-                  Create Account
+                  Create Item
                 </Button>
                 <Button
                   sx={{ mt: 1 }}
                   variant="outlined"
-                  onClick={() => navigate("/")}
+                  onClick={() => {
+                    navigate(`/user/${username}`);
+                  }}
                 >
-                  Back to Login
+                  Back to your items
                 </Button>
               </Stack>
             </form>
