@@ -133,7 +133,7 @@ app.post("/users", async (req, res) => {
     })
     .then((data) => {
       console.log(`Username: ${username} was made successfully`);
-      res.status(201).send("User succesfully created!");
+      res.status(201).send(data);
     })
     .catch((err) => {
       res.status(503).json({
