@@ -119,7 +119,7 @@ export default function CreateAccount() {
                 <h1>Create New Account</h1>
                 <FormControl id="first_name" isRequired>
                   <Input
-                    placeholder="first_name"
+                    placeholder="First Name"
                     name="first_name"
                     sx={{ mt: 1 }}
                     value={userDetails.first_name}
@@ -129,14 +129,14 @@ export default function CreateAccount() {
                 <FormControl id="last_name" isRequired>
                   <Input
                     id="last_name"
-                    placeholder="last_name"
+                    placeholder="Last Name"
                     name="last_name"
                     sx={{ mt: 1 }}
                     value={userDetails.last_name}
                     onChange={handleChange}
                   />
                 </FormControl>
-                <FormControl id="username" isRequired>
+                <FormControl id="Username" isRequired>
                   <Input
                     id="username"
                     placeholder="Username"

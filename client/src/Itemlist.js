@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import "./Itemlist.css";
-const handleUpdate = require("./helpers/handleUpdate");
+// const handleUpdate = require("./helpers/handleUpdate");
 const baseUrl = "http://localhost:5000/items";
 
 export default function Itemlist({ user }) {
@@ -48,7 +48,9 @@ export default function Itemlist({ user }) {
     setOpen(false);
   };
 
-  const handleOpenEdit = () => {
+  const handleOpenEdit = (item) => {
+    setItemDetails(item);
+    console.log("ITEM DETAILS FROM HANDLE OPEN", itemDetails);
     setOpenEdit(true);
   };
 
@@ -61,13 +63,25 @@ export default function Itemlist({ user }) {
     handleOpen();
   };
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setUserDetails({
-  //     ...userDetails,
-  //     [name]: value,
-  //   });
-  // };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setItemDetails({
+      ...itemDetails,
+      [name]: value,
+    });
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    await fetch(`http://localhost:5000/items/${itemDetails.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(itemDetails),
+    });
+    setDeleteFlag(!deleteFlag);
+  };
 
   const body = (
     <Card sx={{ width: 400, mx: "auto", p: 3, mt: 5 }}>
@@ -81,29 +95,26 @@ export default function Itemlist({ user }) {
 
   const bodyEdit = (
     <Card sx={{ width: 400, mx: "auto", p: 3, mt: 5 }}>
-      <Grid container justifyContent="space-between">
-        <h3>{itemDetails.item_name}</h3>
-      </Grid>
       <form onSubmit={handleUpdate}>
         <Stack>
           <h1>Edit Item</h1>
-          <FormControl id="item_name">
+          <FormControl id="item_name" isRequired>
             <Input
               placeholder={itemDetails.item_name}
               name="item_name"
               sx={{ mt: 1 }}
               value={itemDetails.item_name}
-              // onChange={handleChange}
+              onChange={handleChange}
             />
           </FormControl>
-          <FormControl id="quantity">
+          <FormControl id="quantity" isRequired>
             <Input
               id="quantity"
               placeholder={itemDetails.quantity}
               name="quantity"
               sx={{ mt: 1 }}
               value={itemDetails.quantity}
-              // onChange={handleChange}
+              onChange={handleChange}
             />
           </FormControl>
           <FormControl id="description" isRequired>
@@ -114,7 +125,7 @@ export default function Itemlist({ user }) {
               sx={{ mt: 2, p: 0 }}
               minRows={3}
               value={itemDetails.description}
-              // onChange={handleChange}
+              onChange={handleChange}
             ></TextField>
           </FormControl>
           <Button sx={{ mt: 1 }} variant="contained" type="submit">
@@ -155,7 +166,7 @@ export default function Itemlist({ user }) {
                 {user !== undefined ? (
                   <>
                     <DeleteIcon onClick={() => handleDelete(item)} />
-                    <EditIcon onClick={() => handleOpenEdit()} />
+                    <EditIcon onClick={() => handleOpenEdit(item)} />
                   </>
                 ) : (
                   ""

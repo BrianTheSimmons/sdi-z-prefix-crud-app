@@ -11,8 +11,6 @@ export default function UserPage() {
   const { username } = useParams();
   const [flag, setFlag] = useState(0);
 
-  console.log("USER FROM USERPAGE.JS: ", user.length);
-
   useEffect(() => {
     fetch(`http://localhost:5000/users/${username}`)
       .then((res) => res.json())
