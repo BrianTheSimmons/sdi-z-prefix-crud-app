@@ -38,7 +38,13 @@ You will need to create a database with the following name:
 
 CREATE DATABASE inventory_management;
 
-From here, you should be able to run 'npm start' while inside of the api_server directory to populate the database with the appropriate tables and seed data (NOTE: The seed users do not have hashed passwords, and thus will not be able to login), as well as start the server! If not, make sure you ran all of the commands as outlined above and try again. If issues still persist, god speed.
+You are now free to back out of the DB and back to your terminal, or run a new terminal in VS Code.
+
+CD into the client directory and run 'npm install'
+
+CD into the api-server directory and run 'npm install'
+
+From here, you should be able to run 'npm start' while inside of the api_server directory to populate the database with the appropriate tables and seed data (NOTE: The seed users do not have hashed passwords, and thus will not be able to login. They are simply there to ensure the data is being passed into the DB and the appropriate tables are created), as well as start the server! If not, make sure you ran all of the commands as outlined above and try again. If issues still persist, god speed.
 
 After the above has been accomplished, CD into the 'client' directory and run 'npm start'
 
@@ -49,3 +55,5 @@ This should start the React app and open it in your browser. From here, you can 
 - There is no persistent log in, which I would like to implement. There is a log in system, however if you click "view all items" from your account page, it will then treat you the same as a guest.
 
 - Refactoring: There are PLENTY of places that the app could use some cleanup. Notably, in the Itemlist.js file there are multiple functions that I would liked to have separated into their own files and pull in in order to shorten the overall file length.
+
+- If you want to shut down the app and re-open it for any reason, make sure to run 'npx knex migrate:rollback' in the api_server directory before closing it out. This makes sure you don't run into issues starting the server later.
